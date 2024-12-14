@@ -23,7 +23,9 @@ contract Raffle is VRFConsumerBaseV2Plus {
         uint256 raffleState
     );
 
-    /** Enums */
+    /**
+     * Enums
+     */
     enum RaffleState {
         OPEN,
         CALCULATING
@@ -115,7 +117,7 @@ contract Raffle is VRFConsumerBaseV2Plus {
 
         s_raffleState = RaffleState.CALCULATING;
 
-        uint256 requestId = s_vrfCoordinator.requestRandomWords(
+        s_vrfCoordinator.requestRandomWords(
             VRFV2PlusClient.RandomWordsRequest({
                 keyHash: i_keyHash,
                 subId: i_subscriptionId,
@@ -131,8 +133,8 @@ contract Raffle is VRFConsumerBaseV2Plus {
     }
 
     function fulfillRandomWords(
-        uint256 requestId,
-        uint256[] calldata randomWords
+        uint256,
+        /* requestId */ uint256[] calldata randomWords
     ) internal override {
         uint256 indexOfWinner = randomWords[0] % s_players.length;
         address payable recentWinner = s_players[indexOfWinner];
@@ -158,5 +160,9 @@ contract Raffle is VRFConsumerBaseV2Plus {
 
     function getRaffleState() external view returns (RaffleState) {
         return s_raffleState;
+    }
+
+    function getPlayers(uint256 indexOfPlayer) external view returns (address) {
+        return s_players[indexOfPlayer];
     }
 }
